@@ -8,12 +8,32 @@ import java.util.List;
 import java.util.Scanner;
 
 public class BuddySystem {
-    private static final int N = 2;
-    private static boolean[] map = new boolean[1 + 2 * (int)Math.pow(2,N)];
-    private static List<MemBlock> usedMem = new LinkedList<>();
-    private static List<MemBlock>[] free_area = new List[N + 1];
+    private int N = 2;
+    private boolean[] map = new boolean[1 + 2 * (int)Math.pow(2,N)];
+    private List<MemBlock> usedMem = new LinkedList<>();
+    private List<MemBlock>[] free_area = new List[N + 1];
+
+    public int getN() {
+        return N;
+    }
+
+    public boolean[] getMap() {
+        return map;
+    }
+
+    public List<MemBlock> getUsedMem() {
+        return usedMem;
+    }
+
+    public List<MemBlock>[] getFree_area() {
+        return free_area;
+    }
 
     public static void main(String[] args) {
+        BuddySystem buddySystem = new BuddySystem();
+        List<MemBlock>[] free_area = buddySystem.getFree_area();
+        int N = buddySystem.getN();
+        List<MemBlock> usedMem = buddySystem.getUsedMem();
         for (int i = 0; i < free_area.length; i++) {
             free_area[i] = new LinkedList<>();
         }
@@ -32,7 +52,7 @@ public class BuddySystem {
                 System.err.println("超过最大内存!");
                 continue;
             }
-            f(n, n,t);
+            buddySystem.f(n, n,t);
 
             for(int i = 0; i <= N; i++){
                 System.out.print(i + "  ");
@@ -60,7 +80,7 @@ public class BuddySystem {
                 System.err.println("没有这块内存！");
                 continue;
             }
-            g(usedMem.get(index));
+            buddySystem.g(usedMem.get(index));
 
             for (List list : free_area) {
                 System.out.print(list.size() + "  ");
@@ -72,7 +92,7 @@ public class BuddySystem {
     }
 
     // 分配算法
-    public static boolean f(int i, int n,long needSize) {
+    public boolean f(int i, int n,long needSize) {
         if(i > N) {
             System.err.println("内存不足！");
             return false;
@@ -101,7 +121,7 @@ public class BuddySystem {
     }
 
     //释放算法
-    public static void g(MemBlock block){
+    public void g(MemBlock block){
         usedMem.remove(block);
         int buddyIndex;
         int index = block.getIndex();
