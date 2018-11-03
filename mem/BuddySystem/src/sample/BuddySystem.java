@@ -13,6 +13,10 @@ public class BuddySystem {
         map = new boolean[1 + 2 * (int)Math.pow(2,N)];
         usedMem = new LinkedList<>();
         free_area = new List[N + 1];
+        for (int i = 0; i < free_area.length; i++) {
+            free_area[i] = new LinkedList<>();
+        }
+        free_area[N].add(new MemBlock(2));
     }
     public int getN() {
         return N;
@@ -73,7 +77,6 @@ public class BuddySystem {
         }
         if(map[buddyIndex]) { // 伙伴被分配了 那就把自身直接加入到对应的链表
             int n = N - (int) Math.ceil(MyMath.log2(index)) + 1;
-            System.out.print("(" + n +")");
             block.setNeedSize(0);
             free_area[n].add(block);
 
