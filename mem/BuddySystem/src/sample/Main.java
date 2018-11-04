@@ -49,6 +49,7 @@ public class Main extends Application {
             else x = e.getX();
             button.setX(x);
             size = (int) (x / max * Math.pow(2,buddySystem.getN()));
+            text.setFill(Color.BLACK);
             text.setText("松开以分配 " +  size+" 字节 内存");
 
         });
@@ -59,9 +60,17 @@ public class Main extends Application {
                 if (n > buddySystem.getN()) {
                     System.err.println("超过最大内存!");
                 } else if (buddySystem.f(n, n, size)) {
-                    Rectangle rectangle = new Rectangle((height * size) / 5, height);
-                    rectangle.setOnMouseClicked((event) -> {
-                        int index = top.getChildren().indexOf(rectangle);
+                    StackPane backPane = new StackPane();
+                    Pane memPane = new Pane();
+                    int trueSize = (int)Math.pow(2,n);
+                    backPane.setBackground(new Background(new BackgroundFill(Color.BLACK,null,null)));
+                    backPane.setPrefWidth((height * trueSize) / 5);
+                    Text needSizeSize = new Text(size +"/"+trueSize);
+                    needSizeSize.setFont(new Font(20));
+                    needSizeSize.setFill(Color.WHITE);
+                    Rectangle rectangle = new Rectangle((height * size) / 5, height,Color.GREEN);
+                    backPane.setOnMouseClicked((event) -> {
+                        int index = top.getChildren().indexOf(backPane);
                         top.getChildren().remove(index);
                         buddySystem.g(buddySystem.getUsedMem().remove(index));
                         for (List list : buddySystem.getFree_area()){
@@ -69,9 +78,13 @@ public class Main extends Application {
                         }
                         System.out.println();
                     });
-                    top.getChildren().add(rectangle);
+                    memPane.getChildren().add(rectangle);
+                    backPane.getChildren().addAll(memPane,needSizeSize);
+                    top.getChildren().add(backPane);
+                    text.setText("滑动以选择大小");
                 } else {
-                    System.err.println("内存分配失败！");
+                    text.setFill(Color.RED);
+                    text.setText("内存不足！");
                 }
                 for (List list : buddySystem.getFree_area()){
                     System.out.printf("%-4d",list.size());
@@ -80,9 +93,24 @@ public class Main extends Application {
             }
             size = 0;
             button.setX(0);
-            text.setText("滑动以选择大小");
         });
-
+        bottom.setHgap(10);
+        bottom.setVgap(10);
+        bottom.setPadding(new Insets(10));
+        for(int i = 0; i < buddySystem.getFree_area().length; i++){
+            Text numText = new Text(i + "");
+            numText.setFont(new Font(30));
+            bottom.add(numText,0,i);
+            Pane freeMemStackPane = new StackPane();
+            Pane freeMemPane = new Pane();
+            Text freeMem = new Text("?");
+            freeMem.setFont(new Font(30));
+            freeMemStackPane.getChildren().addAll(freeMemPane,freeMem);
+            Rectangle rectangle = new Rectangle(200,30,Color.GREEN);
+            freeMemPane.getChildren().add(rectangle);
+            freeMemPane.getChildren().add(new Rectangle(300,30,Color.GREEN));
+            bottom.add(freeMemStackPane,1,i);
+        }
         pane.setTop(top);
         pane.setCenter(center);
         pane.setBottom(bottom);
